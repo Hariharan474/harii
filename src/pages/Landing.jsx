@@ -9,7 +9,6 @@ export default function Landing({ setCurrentPage }) {
     playClick();
     setCurrentPage("dashboard");
   };
-
   const features = [
     { title: "HTML",   langId: "HTML",   color: "from-red-400 to-orange-500" },
     { title: "CSS",    langId: "CSS",    color: "from-pink-400 to-rose-500" },
