@@ -14,7 +14,7 @@ import { setMuted, getMuted, playLevelUp } from "./utils/sound";
 import { Award, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { auth, googleProvider } from "./utils/firebase";
-import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
+import { onAuthStateChanged, signInWithPopup, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import LoginGate from "./components/LoginGate";
 
 export default function App() {
@@ -125,6 +125,29 @@ export default function App() {
     } catch (error) {
       console.error("Sign-in error details:", error);
       alert(`Sign-in failed: ${error.message || error}\n\nTroubleshooting tips:\n1. Open your Firebase Console and check that Google Sign-in is enabled in Authentication > Sign-in method.\n2. Verify that this website domain is listed in your Firebase Console's Authorized Domains.`);
+    }
+  };
+
+  const handleEmailSignIn = async (email, password) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error("Email sign-in error details:", error);
+      alert(`Sign-in failed: ${error.message || error}\n\nTroubleshooting tips:\n1. Make sure Email/Password Sign-in provider is enabled in Firebase Console > Authentication > Sign-in method.\n2. Verify you typed the correct email and password.`);
+      throw error;
+    }
+  };
+
+  const handleEmailSignUp = async (email, password, displayName) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName });
+      // Update local state to reflect displayName immediately
+      setUser({ ...userCredential.user, displayName });
+    } catch (error) {
+      console.error("Email sign-up error details:", error);
+      alert(`Sign-up failed: ${error.message || error}\n\nTroubleshooting tips:\n1. Make sure Email/Password Sign-in provider is enabled in Firebase Console.\n2. Ensure the email is not already in use.`);
+      throw error;
     }
   };
 
@@ -374,6 +397,8 @@ export default function App() {
         <LoginGate
           userName={userName}
           onSignIn={handleGoogleSignIn}
+          onEmailSignIn={handleEmailSignIn}
+          onEmailSignUp={handleEmailSignUp}
           onJoinArena={(name) => {
             setUserName(name);
             setSessionStarted(true);
