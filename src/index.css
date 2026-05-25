@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+@theme {
+  --color-purple-50: #faf5ff;
+  --color-purple-100: #f3e8ff;
+  --color-purple-200: #e9d5ff;
+  --color-purple-300: #d8b4fe;
+  --color-purple-400: #c084fc;
+  --color-purple-500: #a855f7;
+  --color-purple-600: #8b5cf6;
+  --color-purple-700: #7c3aed;
+  --color-purple-800: #6d28d9;
+  --color-purple-900: #5b21b6;
+  --color-purple-950: #100520;
+
+  --color-indigo-50: #f0f7ff;
+  --color-indigo-100: #e0effe;
+  --color-indigo-200: #bae0fd;
+  --color-indigo-300: #7cc2fc;
+  --color-indigo-400: #38bdf8;
+  --color-indigo-500: #0ea5e9;
+  --color-indigo-600: #0284c7;
+  --color-indigo-700: #0369a1;
+  --color-indigo-800: #075985;
+  --color-indigo-900: #0c4a6e;
+  --color-indigo-950: #030d1a;
+}
+
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --cyan: #00d2ff;
+  --indigo: #0ea5e9;
+  --red-f1: #ef4444;
+  --purple: #8b5cf6;
+  --green: #22c55e;
+}
+
+/* ═══════════════════════════════════════════
+   TEXT SELECTION
+═══════════════════════════════════════════ */
+::selection {
+  background: rgba(0, 210, 255, 0.3);
+  color: #ffffff;
+}
+
+/* ═══════════════════════════════════════════
+   GLASS PANELS
+═══════════════════════════════════════════ */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(15, 12, 41, 0.37);
+  transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════
+   CSS KEYFRAME ANIMATIONS
+═══════════════════════════════════════════ */
+
+/* 1. Shake (quiz wrong answer) */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 45%, 75% { transform: translateX(-6px); }
+  30%, 60%, 90% { transform: translateX(6px); }
+}
+.animate-shake { animation: shake 0.5s ease-in-out; }
+
+/* 2. Float (idle elements) */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float { animation: float 4s ease-in-out infinite; }
+
+/* 3. Neon Flicker */
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 0 0 8px var(--cyan), 0 0 16px var(--cyan), 0 0 32px var(--cyan);
+    opacity: 1;
+  }
+  20%, 24%, 55% { text-shadow: none; opacity: 0.6; }
+}
+.animate-neon-flicker { animation: neon-flicker 3s infinite; }
+
+/* 4. Shimmer sweep */
+@keyframes shimmer-sweep {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.03) 0%,
+    rgba(6,182,212,0.15) 50%,
+    rgba(255,255,255,0.03) 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer-sweep 2.5s linear infinite;
+}
+
+/* 5. HUD Scan Line */
+@keyframes hud-scan {
+  0%   { transform: translateY(-100%); opacity: 0.6; }
+  100% { transform: translateY(200%); opacity: 0; }
+}
+.hud-scan-line {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hud-scan-line::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(6,182,212,0.6), transparent);
+  animation: hud-scan 3s ease-in-out infinite;
+}
+
+/* 6. Data Pulse */
+@keyframes data-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(6,182,212,0.6); }
+  50%       { transform: scale(1.2); opacity: 0.8; box-shadow: 0 0 0 6px rgba(6,182,212,0); }
+}
+.animate-data-pulse { animation: data-pulse 1.8s ease-in-out infinite; }
+
+/* 7. Border Glow Pulse */
+@keyframes border-glow {
+  0%, 100% { border-color: rgba(6,182,212,0.2); box-shadow: 0 0 8px rgba(6,182,212,0.1); }
+  50%       { border-color: rgba(6,182,212,0.5); box-shadow: 0 0 20px rgba(6,182,212,0.25); }
+}
+.animate-border-glow { animation: border-glow 2.5s ease-in-out infinite; }
+
+/* 8. Fade In */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn { animation: fadeIn 0.6s ease-out forwards; }
+
+/* 9. Spin slow */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+
+/* 10. Counter Tick */
+@keyframes counter-tick {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+.animate-tick { animation: counter-tick 0.15s ease-out; }
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
