@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Sparkles, Terminal, HelpCircle } from "lucide-react";
 import { playClick } from "../utils/sound";
 import LanguageLogo from "../components/LanguageLogos";
+import logo from "../assets/logo.png";
 
 export default function Landing({ setCurrentPage }) {
   const handleStart = () => {
@@ -32,7 +33,7 @@ export default function Landing({ setCurrentPage }) {
       >
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <img src="/logo.png" alt="Code Battle Logo" className="h-32 object-contain filter drop-shadow-[0_0_35px_rgba(0,210,255,0.3)] animate-float" />
+          <img src={logo} alt="Code Battle Logo" className="w-20 h-20 rounded-full object-cover border-2 border-indigo-500/30 filter drop-shadow-[0_0_20px_rgba(0,210,255,0.3)] animate-float" />
         </div>
 
         {/* Title */}

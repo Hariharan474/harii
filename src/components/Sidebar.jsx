@@ -1,6 +1,7 @@
 import React from "react";
 import { LayoutDashboard, Trophy, User, Volume2, VolumeX, Sparkles } from "lucide-react";
 import { playClick } from "../utils/sound";
+import logo from "../assets/logo.png";
 
 export default function Sidebar({ currentPage, setCurrentPage, soundMuted, toggleSound }) {
   const menuItems = [
@@ -18,8 +19,8 @@ export default function Sidebar({ currentPage, setCurrentPage, soundMuted, toggl
     <div className="w-64 p-6 bg-black/40 border-r border-white/10 flex flex-col justify-between backdrop-blur-lg">
       <div>
         <div className="flex items-center gap-3 mb-8 cursor-pointer group" onClick={() => handleNav("landing")}>
-          <img src="/logo.png" alt="Code Battle" className="w-9 h-9 object-contain group-hover:scale-105 transition-all duration-300" />
-          <h2 className="text-[22px] font-black tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent group-hover:opacity-90 transition-opacity">
+          <img src={logo} alt="Code Battle" className="w-8 h-8 rounded-full object-cover border border-white/10 group-hover:scale-105 transition-all duration-300" />
+          <h2 className="text-[20px] font-black tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent group-hover:opacity-90 transition-opacity">
             Code Battle
           </h2>
         </div>
