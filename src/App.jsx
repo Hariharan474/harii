@@ -13,9 +13,18 @@ import CustomCursor from "./components/CursorRipple";
 import { setMuted, getMuted, playLevelUp } from "./utils/sound";
 import { Award, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { auth, googleProvider } from "./utils/firebase";
+import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
+import LoginGate from "./components/LoginGate";
 
 export default function App() {
   // --- Persistent State Initialization ---
+  const [user, setUser] = useState(null);
+  const [userName, setUserName] = useState(() => {
+    return localStorage.getItem("cq_username") || "Guest";
+  });
+  const [sessionStarted, setSessionStarted] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(() => {
     return localStorage.getItem("cq_page") || "landing";
   });
@@ -98,6 +107,35 @@ export default function App() {
       localStorage.removeItem("cq_quizresults");
     }
   }, [quizResults]);
+
+  useEffect(() => {
+    localStorage.setItem("cq_username", userName);
+  }, [userName]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Sign-in error details:", error);
+      alert(`Sign-in failed: ${error.message || error}\n\nTroubleshooting tips:\n1. Open your Firebase Console and check that Google Sign-in is enabled in Authentication > Sign-in method.\n2. Verify that this website domain is listed in your Firebase Console's Authorized Domains.`);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setSessionStarted(false); // Direct back to Login Gate
+    } catch (error) {
+      console.error("Sign-out error:", error);
+    }
+  };
 
   // Audio configuration sync
   const toggleSound = () => {
@@ -242,7 +280,14 @@ export default function App() {
   const renderPage = () => {
     switch (currentPage) {
       case "landing":
-        return <Landing setCurrentPage={setCurrentPage} />;
+        return (
+          <Landing
+            setCurrentPage={setCurrentPage}
+            user={user}
+            onSignIn={handleGoogleSignIn}
+            onSignOut={handleSignOut}
+          />
+        );
       case "dashboard":
         return (
           <Dashboard
@@ -251,6 +296,9 @@ export default function App() {
             highScores={highScores}
             onSelectLanguage={handleSelectLanguage}
             setCurrentPage={setCurrentPage}
+            user={user}
+            userName={userName}
+            setUserName={setUserName}
           />
         );
       case "quiz":
@@ -277,6 +325,9 @@ export default function App() {
             streak={streak}
             highScores={highScores}
             onSelectLanguage={handleSelectLanguage}
+            user={user}
+            userName={userName}
+            setUserName={setUserName}
           />
         );
       case "leaderboard":
@@ -289,14 +340,48 @@ export default function App() {
             badges={badges}
             highScores={highScores}
             onResetData={handleResetData}
+            user={user}
+            userName={userName}
+            setUserName={setUserName}
+            onSignIn={handleGoogleSignIn}
+            onSignOut={handleSignOut}
           />
         );
       case "telemetry":
         return null; // Rendered separately below (full-screen)
       default:
-        return <Landing setCurrentPage={setCurrentPage} />;
+        return (
+          <Landing
+            setCurrentPage={setCurrentPage}
+            user={user}
+            onSignIn={handleGoogleSignIn}
+            onSignOut={handleSignOut}
+          />
+        );
     }
   };
+
+  // --- Login Gate Override ---
+  // If the user is not logged in with Google AND has not started their session,
+  // we display the LoginGate gateway full-screen.
+  const showLoginGate = !user && !sessionStarted;
+
+  if (showLoginGate) {
+    return (
+      <div className="relative min-h-screen text-white overflow-hidden bg-black">
+        <WaveBackground />
+        <CustomCursor />
+        <LoginGate
+          userName={userName}
+          onSignIn={handleGoogleSignIn}
+          onJoinArena={(name) => {
+            setUserName(name);
+            setSessionStarted(true);
+          }}
+        />
+      </div>
+    );
+  }
 
   // Render Layout Shell:
   // If we are on landing, we don't display Sidebar and Navbar.
@@ -342,7 +427,13 @@ export default function App() {
       {/* Main Body */}
       <div className="flex-1 flex flex-col min-h-screen relative overflow-hidden">
         {/* Top Navbar */}
-        <Navbar xp={xp} streak={streak} />
+        <Navbar
+          xp={xp}
+          streak={streak}
+          user={user}
+          onSignIn={handleGoogleSignIn}
+          onSignOut={handleSignOut}
+        />
 
         {/* Content Box */}
         <main className="flex-1 p-6 sm:p-8 overflow-y-auto z-10">

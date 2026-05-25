@@ -4,7 +4,7 @@ import StatCard from "../components/StatCard";
 import LanguageCard from "../components/LanguageCard";
 import { motion } from "framer-motion";
 
-export default function Dashboard({ xp, streak, highScores, onSelectLanguage, setCurrentPage }) {
+export default function Dashboard({ xp, streak, highScores, onSelectLanguage, setCurrentPage, user, userName, setUserName }) {
   const currentLevel = Math.floor(xp / 1000) + 1;
   const xpInCurrentLevel = xp % 1000;
   const remainingXp = 1000 - xpInCurrentLevel;
@@ -16,12 +16,48 @@ export default function Dashboard({ xp, streak, highScores, onSelectLanguage, se
       {/* Header Greeting */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">
-            Welcome Back 👋
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-black text-white tracking-tight">
+              Welcome Back, {user ? user.displayName : userName} 👋
+            </h1>
+            {!user && (
+              <button
+                onClick={() => {
+                  const newName = prompt("Enter your name:", userName);
+                  if (newName && newName.trim() !== "") {
+                    setUserName(newName.trim());
+                  }
+                }}
+                className="p-1 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all text-xs flex items-center gap-1 cursor-pointer"
+                title="Edit name"
+              >
+                ✏️
+              </button>
+            )}
+          </div>
           <p className="text-gray-400 text-sm mt-1">
             Choose a quest path, complete quizzes, and keep your streak alive!
           </p>
+          {!user && userName === "Guest" && (
+            <div className="mt-2.5 flex items-center gap-2 max-w-xs bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
+              <span className="text-xs text-gray-400">Set Name:</span>
+              <input
+                type="text"
+                placeholder="Enter your name..."
+                className="bg-transparent text-xs text-white border-b border-purple-500/30 focus:border-purple-500 outline-none w-28 py-0.5"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.target.value.trim() !== "") {
+                    setUserName(e.target.value.trim());
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value.trim() !== "") {
+                    setUserName(e.target.value.trim());
+                  }
+                }}
+              />
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <div className="text-xs text-purple-300 font-semibold bg-purple-950/40 border border-purple-500/20 px-3.5 py-2 rounded-xl">

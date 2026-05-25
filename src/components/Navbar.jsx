@@ -1,7 +1,7 @@
 import React from "react";
 import { Award, Zap, Flame } from "lucide-react";
 
-export default function Navbar({ xp, streak }) {
+export default function Navbar({ xp, streak, user, onSignIn, onSignOut }) {
   const xpPerLevel = 1000;
   const currentLevel = Math.floor(xp / xpPerLevel) + 1;
   const xpInCurrentLevel = xp % xpPerLevel;
@@ -46,6 +46,43 @@ export default function Navbar({ xp, streak }) {
               <span className="text-sm font-black text-white">{currentLevel}</span>
             </div>
           </div>
+        </div>
+
+        {/* Google Authentication Control */}
+        <div className="border-l border-white/10 pl-4 py-1 flex items-center">
+          {user ? (
+            <div className="flex items-center gap-3">
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName}
+                  className="w-8 h-8 rounded-full border border-purple-500/40 object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center font-bold text-white text-sm">
+                  {user.displayName ? user.displayName.charAt(0) : "U"}
+                </div>
+              )}
+              <div className="hidden lg:block text-left">
+                <span className="text-xs font-bold text-white block max-w-[100px] truncate">
+                  {user.displayName}
+                </span>
+              </div>
+              <button
+                onClick={onSignOut}
+                className="text-[11px] text-red-400 hover:text-red-300 font-bold bg-red-950/20 border border-red-500/20 px-2.5 py-1.5 rounded-lg hover:bg-red-900/30 transition-all cursor-pointer"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={onSignIn}
+              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-md border border-purple-500/20 hover:scale-105 transition-all cursor-pointer"
+            >
+              Sign In
+            </button>
+          )}
         </div>
       </div>
     </header>
