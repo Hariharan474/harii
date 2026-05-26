@@ -524,15 +524,16 @@ const SYNTAX_LESSONS = {
 };
 
 export default function PunishmentTask({ language, xp, onComplete }) {
-  const [task, setTask] = useState(null);
+  const [lessons, setLessons] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [typedText, setTypedText] = useState("");
   const [solved, setSolved] = useState(false);
   const [showError, setShowError] = useState(false);
   const [failuresCount, setFailuresCount] = useState(0);
   const inputRef = useRef(null);
 
-  // Helper to load a random syntax lesson, preferably different from the current one
-  const loadRandomTask = (currentTask = null) => {
+  // Initialize and filter/shuffle lessons based on language and XP level on mount
+  useEffect(() => {
     const activeLang = language || "JS";
     const lessonsList = SYNTAX_LESSONS[activeLang] || SYNTAX_LESSONS["JS"];
     
@@ -545,19 +546,16 @@ export default function PunishmentTask({ language, xp, onComplete }) {
       filteredList = lessonsList;
     }
     
-    if (currentTask && filteredList.length > 1) {
-      filteredList = filteredList.filter((l) => l.topic !== currentTask.topic);
-    }
-    
-    const randomIndex = Math.floor(Math.random() * filteredList.length);
-    setTask(filteredList[randomIndex]);
+    // Shuffle the lessons list to make it dynamic
+    const shuffled = [...filteredList].sort(() => Math.random() - 0.5);
+    setLessons(shuffled);
+    setCurrentIndex(0);
     setTypedText("");
-  };
-
-  // Initialize a random task based on language on mount
-  useEffect(() => {
-    loadRandomTask();
+    setSolved(false);
+    setFailuresCount(0);
   }, [language, xp]);
+
+  const task = lessons[currentIndex];
 
   // Focus the text input when task is loaded
   useEffect(() => {
@@ -570,6 +568,8 @@ export default function PunishmentTask({ language, xp, onComplete }) {
     e.preventDefault();
     if (solved) return;
 
+    if (!task) return;
+
     const trimmedInput = typedText.trim();
     const isSQL = (language || "JS") === "SQL";
 
@@ -579,21 +579,32 @@ export default function PunishmentTask({ language, xp, onComplete }) {
       : trimmedInput === task.answer;
 
     if (isCorrect) {
-      triggerSuccess();
+      playCorrect();
+      
+      if (currentIndex < lessons.length - 1) {
+        // Clear current layer, trigger intermediate solve animation, then load next task
+        setSolved(true);
+        setTimeout(() => {
+          setSolved(false);
+          setCurrentIndex((prev) => prev + 1);
+          setTypedText("");
+        }, 1000);
+      } else {
+        // All layers solved successfully! Trigger final success flow
+        triggerSuccess();
+      }
     } else {
       playIncorrect();
       setShowError(true);
       setFailuresCount((prev) => prev + 1);
       setTimeout(() => {
         setShowError(false);
-        loadRandomTask(task); // Load new syntax challenge when they fail!
       }, 800);
     }
   };
 
   const triggerSuccess = () => {
     setSolved(true);
-    playCorrect();
     setTimeout(() => {
       onComplete();
     }, 1200);
@@ -638,13 +649,13 @@ export default function PunishmentTask({ language, xp, onComplete }) {
           <div className="flex items-center justify-between text-red-400 w-full">
             <div className="flex items-center gap-2">
               <ShieldAlert size={16} className="animate-bounce flex-shrink-0" />
-              <span className="text-[10px] font-black tracking-widest uppercase">
-                SYNTAX OVERRIDE REQUIRED: {language || "JS"} DETECTED
+              <span className="text-[10px] font-black tracking-widest uppercase text-left">
+                SYNTAX OVERRIDE REQUIRED: {language || "JS"} DETECTED (Layer {currentIndex + 1}/{lessons.length})
               </span>
             </div>
             {failuresCount > 0 && (
               <span className="text-[9px] font-bold bg-red-500/20 border border-red-500/30 px-2 py-0.5 rounded-full text-red-300 tracking-wider">
-                Rotations: {failuresCount}
+                Failures: {failuresCount}
               </span>
             )}
           </div>
@@ -653,7 +664,7 @@ export default function PunishmentTask({ language, xp, onComplete }) {
           <div className="bg-black/30 border border-white/5 p-3 rounded-xl">
             <p className="text-xs text-red-200 italic leading-relaxed">
               {failuresCount === 0
-                ? "Access Locked! Your syntax compilation failed. Review the concept below and enter the correct compiler bypass parameter."
+                ? `Access Locked! Your syntax compilation failed. Complete all ${lessons.length} syntax layers for this level to restore compiler sync.`
                 : `Bypass attempt failed! The compiler has rotated its security signature. You must master this new syntax concept to bypass: ${task.topic}!`}
             </p>
           </div>
@@ -685,15 +696,22 @@ export default function PunishmentTask({ language, xp, onComplete }) {
             <AnimatePresence mode="wait">
               {solved ? (
                 <motion.div
+                  key="solved-layer"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   className="flex items-center justify-center md:justify-start gap-2 text-green-400 font-bold text-sm bg-green-950/20 border border-green-500/30 p-3 rounded-xl"
                 >
                   <CheckCircle2 size={16} className="animate-pulse" />
-                  <span>Bypass Authenticated. System Re-engaging...</span>
+                  <span>
+                    {currentIndex < lessons.length - 1
+                      ? `Decryption Layer ${currentIndex + 1}/${lessons.length} Cleared...`
+                      : "Bypass Authenticated. System Re-engaging..."}
+                  </span>
                 </motion.div>
               ) : (
                 <motion.form
+                  key={task.topic}
                   onSubmit={handleVerify}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
