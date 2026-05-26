@@ -1,69 +1,203 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldAlert, CheckCircle2, Zap } from "lucide-react";
+import { ShieldAlert, CheckCircle2, Code2, BookOpen } from "lucide-react";
 import { playCorrect, playIncorrect, playClick } from "../utils/sound";
 
-// List of available punishment tasks
-const TASKS = [
-  {
-    type: "TAP",
-    title: "Overload Shield Burst",
-    instructions: "Rapidly tap the glowing core node to vent the system anomaly!",
-    targetTapCount: 8,
-  },
-  {
-    type: "TYPE",
-    title: "Override Code Bypass",
-    instructions: "Re-type this system check string exactly to reset validation:",
-    targetString: "BATTLE_ACTIVE_77",
-  },
-  {
-    type: "LOGIC",
-    title: "Binary Core Conversion",
-    instructions: "What is the decimal equivalent of binary '1101'?",
-    options: ["11", "13", "15", "9"],
-    correctAnswer: "13",
-  },
-];
+// Context-aware syntax database grouped by language
+const SYNTAX_LESSONS = {
+  JS: [
+    {
+      topic: "Nullish Coalescing (??)",
+      description: "The ?? operator returns its right-hand side operand when its left-hand side operand is null or undefined, unlike || which evaluates falsy values (like 0 or '').",
+      example: "const port = process.env.PORT ?? 3000;",
+      challenge: "const theme = userTheme ___ 'dark';",
+      instruction: "Fallback to 'dark' only if userTheme is null or undefined.",
+      answer: "??"
+    },
+    {
+      topic: "Arrow Functions (=>)",
+      description: "Arrow functions allow a shorter syntax for writing function expressions. They do not bind their own 'this'.",
+      example: "const add = (a, b) => a + b;",
+      challenge: "const double = (x) ___ x * 2;",
+      instruction: "Add the arrow operator to complete the double function expression.",
+      answer: "=>"
+    },
+    {
+      topic: "Optional Chaining (?.)",
+      description: "The ?. operator reads properties deep within a chain of objects without having to validate each reference.",
+      example: "const email = user?.profile?.email;",
+      challenge: "const street = user?.address___street;",
+      instruction: "Safely access the street property in case address is undefined.",
+      answer: "?."
+    }
+  ],
+  Python: [
+    {
+      topic: "List Comprehension",
+      description: "List comprehensions provide a concise way to create lists using a for loop inside brackets.",
+      example: "evens = [x for x in numbers if x % 2 == 0]",
+      challenge: "squares = [x**2 ___ x in range(5)]",
+      instruction: "Complete the list comprehension by adding the loop keyword.",
+      answer: "for"
+    },
+    {
+      topic: "Lambda Functions",
+      description: "Lambda functions are small, anonymous, one-line functions defined with the lambda keyword.",
+      example: "greet = lambda name: f'Hi {name}'",
+      challenge: "add_ten = ___ x: x + 10",
+      instruction: "Declare the anonymous lambda function to add 10 to a number.",
+      answer: "lambda"
+    },
+    {
+      topic: "F-strings",
+      description: "F-strings (formatted string literals) allow embedding expressions inside string literals using curly braces {}.",
+      example: "print(f'User: {name}')",
+      challenge: "msg = ___'Active since {year}'",
+      instruction: "Prefix the string literal to enable format expression evaluation.",
+      answer: "f"
+    }
+  ],
+  Java: [
+    {
+      topic: "Generic Types",
+      description: "Generics ensure compile-time type safety by parameterizing types inside angle brackets.",
+      example: "ArrayList<Integer> list = new ArrayList<>();",
+      challenge: "Map___String, Integer> map = new HashMap<>();",
+      instruction: "Open the generic type definition brackets.",
+      answer: "<"
+    },
+    {
+      topic: "Enhanced For Loop",
+      description: "The enhanced for loop (for-each) iterates through arrays or collections using a colon (:) separator.",
+      example: "for (int num : numbers) { ... }",
+      challenge: "for (String name ___ names) { System.out.println(name); }",
+      instruction: "Complete the enhanced for loop iterator statement.",
+      answer: ":"
+    },
+    {
+      topic: "Lambda Expressions",
+      description: "Java lambdas implement functional interfaces using the arrow (->) syntax.",
+      example: "btn.setOnAction(event -> handleEvent());",
+      challenge: "runnableList.forEach(task ___ task.run());",
+      instruction: "Add the lambda operator to execute run() on each task.",
+      answer: "->"
+    }
+  ],
+  CSS: [
+    {
+      topic: "CSS Variables",
+      description: "CSS custom properties are defined with double hyphens (--) and accessed using the var() function.",
+      example: "color: var(--main-color);",
+      challenge: "background: ___(--theme-bg);",
+      instruction: "Add the function keyword to reference the custom property variable.",
+      answer: "var"
+    },
+    {
+      topic: "CSS Grid",
+      description: "CSS Grid is a two-dimensional grid-based layout system activated using the grid display value.",
+      example: "display: grid;",
+      challenge: "display: ___;",
+      instruction: "Activate grid layout on this container element.",
+      answer: "grid"
+    },
+    {
+      topic: "ID Selector Specificity",
+      description: "ID selectors target a single element with a specific ID attribute and are prefixed with a hash (#) symbol.",
+      example: "#main-container { width: 100%; }",
+      challenge: "___app-root { display: flex; }",
+      instruction: "Select the HTML element with id='app-root'.",
+      answer: "#"
+    }
+  ],
+  HTML: [
+    {
+      topic: "Anchor Hyperlink Source",
+      description: "The <a> element creates links, defining the target URL using the href attribute.",
+      example: "<a href='https://example.com'>Visit Us</a>",
+      challenge: "<a ___='/dashboard'>Home</a>",
+      instruction: "Add the attribute that specifies the destination URL.",
+      answer: "href"
+    },
+    {
+      topic: "Image Source Attribute",
+      description: "The <img> tag embeds an image, using the src attribute for the image path.",
+      example: "<img src='logo.png' alt='Logo' />",
+      challenge: "<img ___={profilePic} alt='User Avatar' />",
+      instruction: "Specify the image source file path attribute.",
+      answer: "src"
+    },
+    {
+      topic: "Form Placeholder Hint",
+      description: "The placeholder attribute defines a temporary hint shown in input fields before typing.",
+      example: "<input placeholder='Enter text...' />",
+      challenge: "<input type='email' ___='name@domain.com' />",
+      instruction: "Add the input hint attribute for an email form field.",
+      answer: "placeholder"
+    }
+  ],
+  SQL: [
+    {
+      topic: "Pattern Matching (LIKE)",
+      description: "The LIKE operator is used with wildcards (% or _) to search for matching substring patterns in columns.",
+      example: "SELECT * FROM users WHERE email LIKE '%@gmail.com';",
+      challenge: "SELECT * FROM products WHERE name ___ 'Tech%';",
+      instruction: "Perform a wildcard search for products starting with 'Tech'.",
+      answer: "LIKE"
+    },
+    {
+      topic: "Data Grouping",
+      description: "The GROUP BY clause groups rows that have the same values into summary rows (like count or average).",
+      example: "SELECT dept, AVG(salary) FROM employees GROUP BY dept;",
+      challenge: "SELECT role, COUNT(*) FROM users ___ BY role;",
+      instruction: "Complete the aggregate grouping clause.",
+      answer: "GROUP"
+    },
+    {
+      topic: "Sorting Results (ORDER BY)",
+      description: "The ORDER BY clause sorts query results in ascending (ASC) or descending (DESC) order.",
+      example: "SELECT * FROM items ORDER BY price DESC;",
+      challenge: "SELECT * FROM employees ORDER ___ salary ASC;",
+      instruction: "Complete the sort ordering clause.",
+      answer: "BY"
+    }
+  ]
+};
 
-export default function PunishmentTask({ onComplete }) {
+export default function PunishmentTask({ language, onComplete }) {
   const [task, setTask] = useState(null);
-  const [taps, setTaps] = useState(0);
   const [typedText, setTypedText] = useState("");
   const [solved, setSolved] = useState(false);
   const [showError, setShowError] = useState(false);
+  const inputRef = useRef(null);
 
-  // Initialize a random task on mount
+  // Initialize a random task based on language on mount
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * TASKS.length);
-    setTask(TASKS[randomIndex]);
-  }, []);
+    const activeLang = language || "JS";
+    const lessonsList = SYNTAX_LESSONS[activeLang] || SYNTAX_LESSONS["JS"];
+    const randomIndex = Math.floor(Math.random() * lessonsList.length);
+    setTask(lessonsList[randomIndex]);
+  }, [language]);
 
-  const handleTap = () => {
-    if (solved) return;
-    playClick();
-    const nextTaps = taps + 1;
-    setTaps(nextTaps);
-    if (nextTaps >= task.targetTapCount) {
-      triggerSuccess();
+  // Focus the text input when task is loaded
+  useEffect(() => {
+    if (task && inputRef.current) {
+      inputRef.current.focus();
     }
-  };
+  }, [task]);
 
-  const handleTypeSubmit = (e) => {
+  const handleVerify = (e) => {
     e.preventDefault();
     if (solved) return;
-    if (typedText.trim() === task.targetString) {
-      triggerSuccess();
-    } else {
-      playIncorrect();
-      setShowError(true);
-      setTimeout(() => setShowError(false), 800);
-    }
-  };
 
-  const handleLogicSelect = (opt) => {
-    if (solved) return;
-    if (opt === task.correctAnswer) {
+    const trimmedInput = typedText.trim();
+    const isSQL = (language || "JS") === "SQL";
+
+    // SQL matches are case-insensitive. Other languages match exactly.
+    const isCorrect = isSQL
+      ? trimmedInput.toUpperCase() === task.answer.toUpperCase()
+      : trimmedInput === task.answer;
+
+    if (isCorrect) {
       triggerSuccess();
     } else {
       playIncorrect();
@@ -75,7 +209,6 @@ export default function PunishmentTask({ onComplete }) {
   const triggerSuccess = () => {
     setSolved(true);
     playCorrect();
-    // Complete task after short delay so user sees success state
     setTimeout(() => {
       onComplete();
     }, 1200);
@@ -83,55 +216,78 @@ export default function PunishmentTask({ onComplete }) {
 
   if (!task) return null;
 
+  // Split challenge into left and right parts at "___" for inline rendering
+  const parts = task.challenge.split("___");
+  const left = parts[0] || "";
+  const right = parts[1] || "";
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, y: 20 }}
-      className="glass-panel p-6 rounded-2xl border-2 border-red-500/40 bg-red-950/20 shadow-2xl relative overflow-hidden mt-6"
+      className="glass-panel p-6 rounded-2xl border-2 border-red-500/40 bg-red-950/20 shadow-[0_0_30px_rgba(239,68,68,0.15)] relative overflow-hidden mt-6"
     >
       {/* Red ambient warning pulse */}
       <div className="absolute inset-0 bg-red-500/5 animate-pulse pointer-events-none" />
 
       {/* Grid Layout: Akira on left, Task on right */}
-      <div className="flex flex-col md:flex-row items-center gap-5 relative z-10">
+      <div className="flex flex-col md:flex-row items-start gap-5 relative z-10">
         
         {/* Akira Mentor Avatar */}
-        <div className="flex flex-col items-center flex-shrink-0">
-          <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+        <div className="flex flex-col items-center flex-shrink-0 mx-auto md:mx-0">
+          <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]">
             <img
               src="/character_mentor.png"
               alt="Akira, Code Sentinel"
               className="w-full h-full object-cover"
             />
           </div>
-          <span className="text-xs font-black text-red-400 mt-2 tracking-widest uppercase">
+          <span className="text-[10px] font-black text-red-400 mt-2 tracking-widest uppercase text-center">
             AKIRA (SENTINEL)
           </span>
         </div>
 
         {/* Task Details & UI */}
-        <div className="flex-1 space-y-3.5 text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-2 text-red-400">
-            <ShieldAlert size={16} className="animate-bounce" />
+        <div className="flex-1 space-y-4 w-full">
+          <div className="flex items-center gap-2 text-red-400">
+            <ShieldAlert size={16} className="animate-bounce flex-shrink-0" />
             <span className="text-[10px] font-black tracking-widest uppercase">
-              PUNISHMENT ACTIVE: {task.title}
+              SYNTAX OVERRIDE REQUIRED: {language || "JS"} DETECTED
             </span>
           </div>
 
-          {/* Akira Dialogue */}
+          {/* Akira Dialog */}
           <div className="bg-black/30 border border-white/5 p-3 rounded-xl">
             <p className="text-xs text-red-200 italic leading-relaxed">
-              "Access Locked! Your syntax compilation failed. Complete this override task immediately to secure the next gateway!"
+              "Access Locked! Your syntax compilation failed. Review the concept below and enter the correct compiler bypass parameter."
             </p>
           </div>
 
-          <p className="text-xs text-gray-300 font-bold leading-normal">
-            {task.instructions}
-          </p>
+          {/* Syntax Lesson Card */}
+          <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-3">
+            <div className="flex items-center gap-1.5 text-purple-400">
+              <BookOpen size={14} />
+              <span className="text-xs font-bold uppercase tracking-wider">{task.topic}</span>
+            </div>
+            
+            <p className="text-xs text-gray-300 leading-relaxed">
+              {task.description}
+            </p>
 
-          {/* Interactive Area */}
-          <div className="pt-2">
+            <div className="bg-black/40 border border-white/5 p-3 rounded-lg">
+              <span className="text-[10px] font-black text-purple-400 tracking-wider block mb-1 uppercase">Reference Model</span>
+              <pre className="text-xs font-mono text-purple-200 whitespace-pre-wrap">{task.example}</pre>
+            </div>
+          </div>
+
+          {/* Inline Challenge Section */}
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-1.5 text-gray-300 text-xs font-bold">
+              <Code2 size={14} className="text-red-400" />
+              <span>Bypass Code Challenge: {task.instruction}</span>
+            </div>
+
             <AnimatePresence mode="wait">
               {solved ? (
                 <motion.div
@@ -143,76 +299,41 @@ export default function PunishmentTask({ onComplete }) {
                   <span>Bypass Authenticated. System Re-engaging...</span>
                 </motion.div>
               ) : (
-                <motion.div
+                <motion.form
+                  onSubmit={handleVerify}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={showError ? "animate-shake" : ""}
+                  className={`${showError ? "animate-shake" : ""} space-y-3`}
                 >
-                  {/* Task Type A: Tapping Core */}
-                  {task.type === "TAP" && (
-                    <div className="flex flex-col items-center md:items-start gap-3">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleTap}
-                        className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-rose-700 text-white font-black flex flex-col items-center justify-center shadow-lg border border-red-400 relative overflow-hidden"
-                      >
-                        <Zap size={24} className="animate-pulse" />
-                        <span className="text-[10px] mt-1">{taps} / {task.targetTapCount}</span>
-                      </motion.button>
-                      <div className="w-40 h-2 bg-white/5 rounded-full overflow-hidden mt-1 border border-white/5">
-                        <div
-                          className="h-full bg-red-500 transition-all duration-150"
-                          style={{ width: `${(taps / task.targetTapCount) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
+                  <div className="bg-black/60 font-mono text-xs sm:text-sm p-4 rounded-xl border border-red-500/30 shadow-inner relative overflow-hidden flex flex-wrap items-center gap-1.5 min-h-[56px]">
+                    <span className="text-gray-300 select-none">{left}</span>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      required
+                      value={typedText}
+                      onChange={(e) => setTypedText(e.target.value)}
+                      className="bg-red-500/10 border border-red-500/50 text-red-200 text-center font-bold px-2 py-0.5 rounded-lg focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400 transition-all font-mono placeholder-red-700/60"
+                      placeholder="???"
+                      style={{ width: `${Math.max(45, typedText.length * 10 + 15)}px` }}
+                    />
+                    <span className="text-gray-300 select-none">{right}</span>
+                  </div>
 
-                  {/* Task Type B: Typing Check String */}
-                  {task.type === "TYPE" && (
-                    <form onSubmit={handleTypeSubmit} className="flex gap-2 max-w-sm">
-                      <div className="flex-1 flex flex-col gap-1.5">
-                        <span className="font-mono text-xs bg-black/40 border border-white/10 px-3 py-1.5 rounded-lg text-red-400 text-center font-bold tracking-wider select-none">
-                          {task.targetString}
-                        </span>
-                        <input
-                          type="text"
-                          required
-                          value={typedText}
-                          onChange={(e) => setTypedText(e.target.value)}
-                          placeholder="Type bypass override..."
-                          className="w-full bg-black/40 border border-red-500/30 text-white placeholder-red-700/60 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-red-500"
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        className="bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl px-4 text-xs h-9 mt-[26px] shadow-lg shadow-red-600/20"
-                      >
-                        Verify
-                      </button>
-                    </form>
-                  )}
-
-                  {/* Task Type C: Logic options click */}
-                  {task.type === "LOGIC" && (
-                    <div className="grid grid-cols-2 gap-2 max-w-sm">
-                      {task.options.map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => handleLogicSelect(opt)}
-                          className="bg-black/30 border border-red-500/20 hover:border-red-500/40 hover:bg-red-500/5 text-xs text-white py-2 px-4 rounded-xl transition-all font-bold"
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      className="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold py-2.5 px-6 rounded-xl text-xs shadow-lg shadow-red-900/30 transition-all hover:scale-[1.02]"
+                    >
+                      Verify Syntax Override
+                    </button>
+                  </div>
+                </motion.form>
               )}
             </AnimatePresence>
           </div>
+
         </div>
       </div>
     </motion.div>

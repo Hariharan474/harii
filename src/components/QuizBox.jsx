@@ -120,7 +120,7 @@ export default function QuizBox({
 
               {/* Punishment or Next Button */}
               {punishmentActive && !punishmentCompleted ? (
-                <PunishmentTask onComplete={onPunishmentComplete} />
+                <PunishmentTask language={language} onComplete={onPunishmentComplete} />
               ) : (
                 <button
                   onClick={onNextQuestion}
