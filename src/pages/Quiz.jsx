@@ -5,12 +5,16 @@ import { playCorrect, playIncorrect, playClick } from "../utils/sound";
 import { ArrowLeft } from "lucide-react";
 import LanguageLogo from "../components/LanguageLogos";
 
-export default function Quiz({ language, xp, onBackToDashboard, onQuizFinished }) {
+export default function Quiz({ language, xp, langLevel, onBackToDashboard, onQuizFinished }) {
   const [questions] = useState(() => {
     const originalQs = sampleQuestions[language] || [];
     
+    // Filter questions by level. Fallback to all if none exist for that level.
+    const levelQs = originalQs.filter((q) => q.level === (langLevel || 1));
+    const pool = levelQs.length > 0 ? levelQs : originalQs;
+    
     // Shuffle the order of the questions
-    const shuffledQs = [...originalQs];
+    const shuffledQs = [...pool];
     for (let i = shuffledQs.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffledQs[i], shuffledQs[j]] = [shuffledQs[j], shuffledQs[i]];
@@ -161,6 +165,7 @@ export default function Quiz({ language, xp, onBackToDashboard, onQuizFinished }
       <QuizBox
         language={language}
         xp={xp}
+        langLevel={langLevel}
         question={currentQuestion}
         qIndex={currentIndex}
         totalQs={questions.length}

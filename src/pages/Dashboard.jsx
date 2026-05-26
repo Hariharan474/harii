@@ -4,7 +4,7 @@ import StatCard from "../components/StatCard";
 import LanguageCard from "../components/LanguageCard";
 import { motion } from "framer-motion";
 
-export default function Dashboard({ xp, streak, highScores, onSelectLanguage, setCurrentPage, user, userName, setUserName }) {
+export default function Dashboard({ xp, streak, highScores, langLevels, onSelectLanguage, setCurrentPage, user, userName, setUserName }) {
   const currentLevel = Math.floor(xp / 1000) + 1;
   const xpInCurrentLevel = xp % 1000;
   const remainingXp = 1000 - xpInCurrentLevel;
@@ -121,6 +121,7 @@ export default function Dashboard({ xp, streak, highScores, onSelectLanguage, se
               key={lang}
               langId={lang}
               highScore={highScores[lang]}
+              langLevel={langLevels ? langLevels[lang] : 1}
               onSelect={onSelectLanguage}
             />
           ))}

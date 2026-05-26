@@ -72,6 +72,18 @@ export default function App() {
     return val ? JSON.parse(val) : null;
   });
 
+  const [langLevels, setLangLevels] = useState(() => {
+    const val = localStorage.getItem("cq_langlevels");
+    return val ? JSON.parse(val) : {
+      JS: 1,
+      Python: 1,
+      Java: 1,
+      CSS: 1,
+      HTML: 1,
+      SQL: 1
+    };
+  });
+
   // Badge notification toast state
   const [unlockedToast, setUnlockedToast] = useState(null);
 
@@ -111,6 +123,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem("cq_username", userName);
   }, [userName]);
+
+  useEffect(() => {
+    localStorage.setItem("cq_langlevels", JSON.stringify(langLevels));
+  }, [langLevels]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -269,10 +285,20 @@ export default function App() {
     const resultObj = { score, correctCount, totalQuestions, xpGained, language };
     setQuizResults(resultObj);
 
-    // 5. Check achievement unlocks
+    // 5. Update language level (cycle 1 -> 2 -> 3 -> 1)
+    setLangLevels((prev) => {
+      const currentLvl = prev[language] || 1;
+      const nextLvl = currentLvl < 3 ? currentLvl + 1 : 1;
+      return {
+        ...prev,
+        [language]: nextLvl
+      };
+    });
+
+    // 6. Check achievement unlocks
     checkBadgeUnlocks(newXp, newHighScores, correctCount, totalQuestions, newStreak);
 
-    // 6. Navigate to results page
+    // 7. Navigate to results page
     setCurrentPage("results");
   };
 
@@ -293,6 +319,14 @@ export default function App() {
       CSS: null,
       HTML: null,
       SQL: null
+    });
+    setLangLevels({
+      JS: 1,
+      Python: 1,
+      Java: 1,
+      CSS: 1,
+      HTML: 1,
+      SQL: 1
     });
     setQuizResults(null);
     setCurrentPage("dashboard");
@@ -317,6 +351,7 @@ export default function App() {
             xp={xp}
             streak={streak}
             highScores={highScores}
+            langLevels={langLevels}
             onSelectLanguage={handleSelectLanguage}
             setCurrentPage={setCurrentPage}
             user={user}
@@ -329,6 +364,7 @@ export default function App() {
           <Quiz
             language={selectedLanguage}
             xp={xp}
+            langLevel={langLevels[selectedLanguage] || 1}
             onBackToDashboard={() => setCurrentPage("dashboard")}
             onQuizFinished={handleQuizFinished}
           />
@@ -348,6 +384,7 @@ export default function App() {
             xp={xp}
             streak={streak}
             highScores={highScores}
+            langLevels={langLevels}
             onSelectLanguage={handleSelectLanguage}
             user={user}
             userName={userName}

@@ -6,6 +6,7 @@ import PunishmentTask from "./PunishmentTask";
 export default function QuizBox({
   language,
   xp,
+  langLevel,
   question,
   qIndex,
   totalQs,
@@ -125,7 +126,7 @@ export default function QuizBox({
               {punishmentActive && !punishmentCompleted ? (
                 <PunishmentTask
                   language={language}
-                  xp={xp}
+                  level={langLevel}
                   solvedSyntaxTopics={solvedSyntaxTopics}
                   onComplete={onPunishmentComplete}
                   onSolveTopic={onSolveTopic}

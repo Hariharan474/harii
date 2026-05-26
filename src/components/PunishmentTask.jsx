@@ -523,7 +523,7 @@ const SYNTAX_LESSONS = {
   ]
 };
 
-export default function PunishmentTask({ language, xp, solvedSyntaxTopics = [], onComplete, onSolveTopic }) {
+export default function PunishmentTask({ language, level, solvedSyntaxTopics = [], onComplete, onSolveTopic }) {
   const [lessons, setLessons] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typedText, setTypedText] = useState("");
@@ -532,14 +532,13 @@ export default function PunishmentTask({ language, xp, solvedSyntaxTopics = [], 
   const [failuresCount, setFailuresCount] = useState(0);
   const inputRef = useRef(null);
 
-  // Initialize and filter/shuffle lessons based on language and XP level on mount
+  // Initialize and filter/shuffle lessons based on language and level tier on mount
   useEffect(() => {
     const activeLang = language || "JS";
     const lessonsList = SYNTAX_LESSONS[activeLang] || SYNTAX_LESSONS["JS"];
     
-    // Calculate difficulty tier (Level 1, 2, or 3) from XP
-    const userLevel = Math.floor((xp || 0) / 1000) + 1;
-    const targetLevel = Math.min(3, Math.max(1, userLevel));
+    // Target level is configured directly from level prop (1, 2, or 3)
+    const targetLevel = Math.min(3, Math.max(1, level || 1));
     
     let filteredList = lessonsList.filter((l) => l.level === targetLevel);
     if (filteredList.length === 0) {
@@ -549,13 +548,13 @@ export default function PunishmentTask({ language, xp, solvedSyntaxTopics = [], 
     // Filter out already solved syntax topics in the current quiz session
     let unsolvedList = filteredList.filter((l) => !solvedSyntaxTopics.includes(l.topic));
     
-    // Fallback to the full filtered list if not enough unique lessons are left
-    if (unsolvedList.length < 2) {
+    // Fallback to the full filtered list if no unique lessons are left
+    if (unsolvedList.length < 1) {
       unsolvedList = filteredList;
     }
     
-    // Limit challenges in this block to at most 3
-    const lessonsToSolveCount = Math.min(3, unsolvedList.length);
+    // Select exactly 1 challenge per wrong answer
+    const lessonsToSolveCount = 1;
     
     // Shuffle the lessons list to make it dynamic
     const shuffled = [...unsolvedList]
@@ -567,7 +566,7 @@ export default function PunishmentTask({ language, xp, solvedSyntaxTopics = [], 
     setTypedText("");
     setSolved(false);
     setFailuresCount(0);
-  }, [language, xp]);
+  }, [language, level]);
 
   const task = lessons[currentIndex];
 

@@ -18,7 +18,7 @@ const colorMap = {
   CSS: "#f472b6", HTML: "#fb923c", SQL: "#34d399",
 };
 
-export default function LanguageCard({ langId, highScore, onSelect }) {
+export default function LanguageCard({ langId, highScore, langLevel, onSelect }) {
   const details = languageDetails[langId] || { name: langId, desc: "Coding quiz challenge", color: "from-purple-500 to-indigo-600", shadow: "shadow-purple-500/10" };
   const accentHex = colorMap[langId] || "#06b6d4";
 
@@ -59,9 +59,16 @@ export default function LanguageCard({ langId, highScore, onSelect }) {
       </div>
 
       <div className="mt-6 flex items-center justify-between pt-4 border-t border-white/5">
-        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-          5 Questions
-        </span>
+        <div className="flex flex-col">
+          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+            5 Questions
+          </span>
+          {langLevel && (
+            <span className="text-[9px] font-extrabold text-purple-400 tracking-wider">
+              LEVEL {langLevel}
+            </span>
+          )}
+        </div>
         <button
           onClick={handleStart}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all bg-gradient-to-r ${details.color} shadow-md opacity-90 group-hover:opacity-100 hover:scale-105`}
