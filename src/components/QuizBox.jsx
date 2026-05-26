@@ -5,6 +5,7 @@ import PunishmentTask from "./PunishmentTask";
 
 export default function QuizBox({
   language,
+  xp,
   question,
   qIndex,
   totalQs,
@@ -120,7 +121,7 @@ export default function QuizBox({
 
               {/* Punishment or Next Button */}
               {punishmentActive && !punishmentCompleted ? (
-                <PunishmentTask language={language} onComplete={onPunishmentComplete} />
+                <PunishmentTask language={language} xp={xp} onComplete={onPunishmentComplete} />
               ) : (
                 <button
                   onClick={onNextQuestion}

@@ -5,7 +5,7 @@ import { playCorrect, playIncorrect, playClick } from "../utils/sound";
 import { ArrowLeft } from "lucide-react";
 import LanguageLogo from "../components/LanguageLogos";
 
-export default function Quiz({ language, onBackToDashboard, onQuizFinished }) {
+export default function Quiz({ language, xp, onBackToDashboard, onQuizFinished }) {
   const [questions] = useState(() => {
     const originalQs = sampleQuestions[language] || [];
     return originalQs.map((q) => {
@@ -147,6 +147,7 @@ export default function Quiz({ language, onBackToDashboard, onQuizFinished }) {
 
       <QuizBox
         language={language}
+        xp={xp}
         question={currentQuestion}
         qIndex={currentIndex}
         totalQs={questions.length}

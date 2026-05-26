@@ -328,6 +328,7 @@ export default function App() {
         return (
           <Quiz
             language={selectedLanguage}
+            xp={xp}
             onBackToDashboard={() => setCurrentPage("dashboard")}
             onQuizFinished={handleQuizFinished}
           />
