@@ -17,6 +17,8 @@ export default function QuizBox({
   punishmentActive,
   punishmentCompleted,
   onPunishmentComplete,
+  solvedSyntaxTopics,
+  onSolveTopic,
 }) {
   const percentComplete = Math.round(((qIndex) / totalQs) * 100);
 
@@ -121,7 +123,13 @@ export default function QuizBox({
 
               {/* Punishment or Next Button */}
               {punishmentActive && !punishmentCompleted ? (
-                <PunishmentTask language={language} xp={xp} onComplete={onPunishmentComplete} />
+                <PunishmentTask
+                  language={language}
+                  xp={xp}
+                  solvedSyntaxTopics={solvedSyntaxTopics}
+                  onComplete={onPunishmentComplete}
+                  onSolveTopic={onSolveTopic}
+                />
               ) : (
                 <button
                   onClick={onNextQuestion}

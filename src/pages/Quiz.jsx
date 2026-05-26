@@ -8,7 +8,19 @@ import LanguageLogo from "../components/LanguageLogos";
 export default function Quiz({ language, xp, onBackToDashboard, onQuizFinished }) {
   const [questions] = useState(() => {
     const originalQs = sampleQuestions[language] || [];
-    return originalQs.map((q) => {
+    
+    // Shuffle the order of the questions
+    const shuffledQs = [...originalQs];
+    for (let i = shuffledQs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledQs[i], shuffledQs[j]] = [shuffledQs[j], shuffledQs[i]];
+    }
+
+    // Select a subset of 5 questions for this quiz session
+    const subsetQs = shuffledQs.slice(0, 5);
+
+    // Shuffle options inside each question
+    return subsetQs.map((q) => {
       const indices = q.options.map((_, idx) => idx);
       for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -30,6 +42,7 @@ export default function Quiz({ language, xp, onBackToDashboard, onQuizFinished }
   const [timeLeft, setTimeLeft] = useState(15);
   const [punishmentActive, setPunishmentActive] = useState(false);
   const [punishmentCompleted, setPunishmentCompleted] = useState(false);
+  const [solvedSyntaxTopics, setSolvedSyntaxTopics] = useState([]);
   const timerRef = useRef(null);
 
   const currentQuestion = questions[currentIndex];
@@ -162,6 +175,8 @@ export default function Quiz({ language, xp, onBackToDashboard, onQuizFinished }
           setPunishmentCompleted(true);
           handleNextQuestion();
         }}
+        solvedSyntaxTopics={solvedSyntaxTopics}
+        onSolveTopic={(topic) => setSolvedSyntaxTopics((prev) => [...prev, topic])}
       />
     </div>
   );

@@ -523,7 +523,7 @@ const SYNTAX_LESSONS = {
   ]
 };
 
-export default function PunishmentTask({ language, xp, onComplete }) {
+export default function PunishmentTask({ language, xp, solvedSyntaxTopics = [], onComplete, onSolveTopic }) {
   const [lessons, setLessons] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typedText, setTypedText] = useState("");
@@ -546,8 +546,22 @@ export default function PunishmentTask({ language, xp, onComplete }) {
       filteredList = lessonsList;
     }
     
+    // Filter out already solved syntax topics in the current quiz session
+    let unsolvedList = filteredList.filter((l) => !solvedSyntaxTopics.includes(l.topic));
+    
+    // Fallback to the full filtered list if not enough unique lessons are left
+    if (unsolvedList.length < 2) {
+      unsolvedList = filteredList;
+    }
+    
+    // Limit challenges in this block to at most 3
+    const lessonsToSolveCount = Math.min(3, unsolvedList.length);
+    
     // Shuffle the lessons list to make it dynamic
-    const shuffled = [...filteredList].sort(() => Math.random() - 0.5);
+    const shuffled = [...unsolvedList]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, lessonsToSolveCount);
+      
     setLessons(shuffled);
     setCurrentIndex(0);
     setTypedText("");
@@ -580,6 +594,11 @@ export default function PunishmentTask({ language, xp, onComplete }) {
 
     if (isCorrect) {
       playCorrect();
+      
+      // Register this topic as solved in the parent quiz state
+      if (onSolveTopic) {
+        onSolveTopic(task.topic);
+      }
       
       if (currentIndex < lessons.length - 1) {
         // Clear current layer, trigger intermediate solve animation, then load next task
