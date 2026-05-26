@@ -63,21 +63,7 @@ export default function Dashboard({ xp, streak, highScores, langLevels, onSelect
           <div className="text-xs text-purple-300 font-semibold bg-purple-950/40 border border-purple-500/20 px-3.5 py-2 rounded-xl">
             🚀 Next level in <span className="text-white font-bold">{remainingXp} XP</span>
           </div>
-          {setCurrentPage && (
-            <motion.button
-              onClick={() => setCurrentPage("telemetry")}
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black tracking-widest text-black"
-              style={{
-                background: "linear-gradient(135deg, #06b6d4, #818cf8)",
-                boxShadow: "0 0 20px rgba(6,182,212,0.35)",
-              }}
-            >
-              <Radio size={12} />
-              F1 LIVE
-            </motion.button>
-          )}
+
         </div>
       </div>
 
