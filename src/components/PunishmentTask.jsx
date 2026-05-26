@@ -168,14 +168,27 @@ export default function PunishmentTask({ language, onComplete }) {
   const [typedText, setTypedText] = useState("");
   const [solved, setSolved] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [failuresCount, setFailuresCount] = useState(0);
   const inputRef = useRef(null);
+
+  // Helper to load a random syntax lesson, preferably different from the current one
+  const loadRandomTask = (currentTask = null) => {
+    const activeLang = language || "JS";
+    const lessonsList = SYNTAX_LESSONS[activeLang] || SYNTAX_LESSONS["JS"];
+    
+    let filteredList = lessonsList;
+    if (currentTask && lessonsList.length > 1) {
+      filteredList = lessonsList.filter((l) => l.topic !== currentTask.topic);
+    }
+    
+    const randomIndex = Math.floor(Math.random() * filteredList.length);
+    setTask(filteredList[randomIndex]);
+    setTypedText("");
+  };
 
   // Initialize a random task based on language on mount
   useEffect(() => {
-    const activeLang = language || "JS";
-    const lessonsList = SYNTAX_LESSONS[activeLang] || SYNTAX_LESSONS["JS"];
-    const randomIndex = Math.floor(Math.random() * lessonsList.length);
-    setTask(lessonsList[randomIndex]);
+    loadRandomTask();
   }, [language]);
 
   // Focus the text input when task is loaded
@@ -202,7 +215,11 @@ export default function PunishmentTask({ language, onComplete }) {
     } else {
       playIncorrect();
       setShowError(true);
-      setTimeout(() => setShowError(false), 800);
+      setFailuresCount((prev) => prev + 1);
+      setTimeout(() => {
+        setShowError(false);
+        loadRandomTask(task); // Load new syntax challenge when they fail!
+      }, 800);
     }
   };
 
@@ -250,17 +267,26 @@ export default function PunishmentTask({ language, onComplete }) {
 
         {/* Task Details & UI */}
         <div className="flex-1 space-y-4 w-full">
-          <div className="flex items-center gap-2 text-red-400">
-            <ShieldAlert size={16} className="animate-bounce flex-shrink-0" />
-            <span className="text-[10px] font-black tracking-widest uppercase">
-              SYNTAX OVERRIDE REQUIRED: {language || "JS"} DETECTED
-            </span>
+          <div className="flex items-center justify-between text-red-400 w-full">
+            <div className="flex items-center gap-2">
+              <ShieldAlert size={16} className="animate-bounce flex-shrink-0" />
+              <span className="text-[10px] font-black tracking-widest uppercase">
+                SYNTAX OVERRIDE REQUIRED: {language || "JS"} DETECTED
+              </span>
+            </div>
+            {failuresCount > 0 && (
+              <span className="text-[9px] font-bold bg-red-500/20 border border-red-500/30 px-2 py-0.5 rounded-full text-red-300 tracking-wider">
+                Rotations: {failuresCount}
+              </span>
+            )}
           </div>
 
           {/* Akira Dialog */}
           <div className="bg-black/30 border border-white/5 p-3 rounded-xl">
             <p className="text-xs text-red-200 italic leading-relaxed">
-              "Access Locked! Your syntax compilation failed. Review the concept below and enter the correct compiler bypass parameter."
+              {failuresCount === 0
+                ? "Access Locked! Your syntax compilation failed. Review the concept below and enter the correct compiler bypass parameter."
+                : `Bypass attempt failed! The compiler has rotated its security signature. You must master this new syntax concept to bypass: ${task.topic}!`}
             </p>
           </div>
 

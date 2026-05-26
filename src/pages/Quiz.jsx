@@ -157,7 +157,10 @@ export default function Quiz({ language, onBackToDashboard, onQuizFinished }) {
         timeLeft={timeLeft}
         punishmentActive={punishmentActive}
         punishmentCompleted={punishmentCompleted}
-        onPunishmentComplete={() => setPunishmentCompleted(true)}
+        onPunishmentComplete={() => {
+          setPunishmentCompleted(true);
+          handleNextQuestion();
+        }}
       />
     </div>
   );
