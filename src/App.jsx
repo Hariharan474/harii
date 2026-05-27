@@ -254,7 +254,7 @@ export default function App() {
     setCurrentPage("quiz");
   };
 
-  const handleQuizFinished = ({ score, correctCount, totalQuestions, xpGained, language }) => {
+  const handleQuizFinished = ({ score, correctCount, totalQuestions, xpGained, language, questions }) => {
     const accuracy = Math.round((correctCount / totalQuestions) * 100);
 
     // 1. Calculate and update XP
@@ -282,7 +282,7 @@ export default function App() {
     }
 
     // 4. Save results state
-    const resultObj = { score, correctCount, totalQuestions, xpGained, language };
+    const resultObj = { score, correctCount, totalQuestions, xpGained, language, questions };
     setQuizResults(resultObj);
 
     // 5. Update language level (cycle 1 -> 2 -> 3 -> 1)

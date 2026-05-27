@@ -5,7 +5,7 @@ import { playCheer, playClick } from "../utils/sound";
 import { sampleQuestions } from "../data/questions";
 
 export default function Results({ results, onBackToDashboard, onRetakeQuiz }) {
-  const { correctCount, totalQuestions, xpGained, language } = results;
+  const { correctCount, totalQuestions, xpGained, language, questions: quizQuestions } = results;
   const accuracy = Math.round((correctCount / totalQuestions) * 100);
 
   // Play celebration sound on mount
@@ -26,7 +26,7 @@ export default function Results({ results, onBackToDashboard, onRetakeQuiz }) {
   };
 
   const congrats = getCelebrationDetails();
-  const questions = sampleQuestions[language] || [];
+  const questions = quizQuestions || sampleQuestions[language] || [];
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-fadeIn py-4">

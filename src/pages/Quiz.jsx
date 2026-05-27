@@ -9,22 +9,37 @@ export default function Quiz({ language, xp, langLevel, onBackToDashboard, onQui
   const [questions] = useState(() => {
     const originalQs = sampleQuestions[language] || [];
     
-    // Filter questions by level. Fallback to all if none exist for that level.
-    const levelQs = originalQs.filter((q) => q.level === (langLevel || 1));
-    const pool = levelQs.length > 0 ? levelQs : originalQs;
+    // Extract pools for each difficulty level (1, 2, 3). Fallback to all if a level has no questions.
+    const level1 = originalQs.filter((q) => q.level === 1);
+    const level2 = originalQs.filter((q) => q.level === 2);
+    const level3 = originalQs.filter((q) => q.level === 3);
     
-    // Shuffle the order of the questions
-    const shuffledQs = [...pool];
-    for (let i = shuffledQs.length - 1; i > 0; i--) {
+    // Helper to shuffle and take up to 5 items from a pool
+    const pickFive = (pool) => {
+      const shuffled = [...pool];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled.slice(0, 5);
+    };
+    
+    // Select up to 5 questions from each level
+    const selectedLevel1 = pickFive(level1);
+    const selectedLevel2 = pickFive(level2);
+    const selectedLevel3 = pickFive(level3);
+    
+    // Combine and shuffle the final set
+    const combined = [...selectedLevel1, ...selectedLevel2, ...selectedLevel3];
+    const finalShuffled = [];
+    const poolCopy = [...combined];
+    for (let i = poolCopy.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffledQs[i], shuffledQs[j]] = [shuffledQs[j], shuffledQs[i]];
+      [poolCopy[i], poolCopy[j]] = [poolCopy[j], poolCopy[i]];
     }
-
-    // Select a subset of 5 questions for this quiz session
-    const subsetQs = shuffledQs.slice(0, 5);
-
-    // Shuffle options inside each question
-    return subsetQs.map((q) => {
+    // poolCopy is now shuffled; use it as the final question list
+    
+    return poolCopy.map((q) => {
       const indices = q.options.map((_, idx) => idx);
       for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -120,7 +135,8 @@ export default function Quiz({ language, xp, langLevel, onBackToDashboard, onQui
         correctCount,
         totalQuestions: questions.length,
         xpGained,
-        language
+        language,
+        questions
       });
     }
   };

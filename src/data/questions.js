@@ -1,3 +1,5 @@
+import pythonQuestions from "./python_quiz_questions";
+
 export const sampleQuestions = {
   JS: [
     {
@@ -143,7 +145,15 @@ export const sampleQuestions = {
       ],
       answer: 0,
       explanation: "__slots__ tells Python not to use a dynamic dictionary (__dict__) for each instance, saving memory by allocating space for a fixed set of attributes."
-    }
+    },
+    ...pythonQuestions.map((q) => ({
+      id: `py_new_${q.id}`,
+      level: q.id <= 300 ? 1 : q.id <= 700 ? 2 : 3,
+      question: q.q,
+      options: q.o,
+      answer: q.a,
+      explanation: `Topic: ${q.cat}.`
+    }))
   ],
   Java: [
     {
