@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ashena Parveen | Elegant Henna Art</title>
+    <meta name="description" content="Creating Elegant Henna Art with Passion, Creativity & Grace.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- GSAP & Lenis for Smooth Scrolling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+</head>
+<body>
+    <div class="cursor-glow"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Ashena</a>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#services">Services</a>
+                <a href="#about">About</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <a href="#booking" class="btn-primary nav-btn">Book Now</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-bg">
+            <div class="blur-circle circle-1"></div>
+            <div class="blur-circle circle-2"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-left">
+                <h1 class="hero-title">Ashena<br>Parveen</h1>
+                <div class="hero-subtitle">
+                    <span>Henna Artist</span>
+                    <span class="dot">•</span>
+                    <span>Beautician</span>
+                    <span class="dot">•</span>
+                    <span>Beginner & Learner</span>
+                </div>
+                <p class="hero-intro">
+                    "I believe every hand tells a story. My passion is creating elegant and graceful henna designs that celebrate tradition with modern beauty."
+                </p>
+                <div class="hero-actions">
+                    <a href="#booking" class="btn-primary magnetic">Book Appointment</a>
+                    <a href="#gallery" class="btn-secondary magnetic">View Gallery</a>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="illustration-wrapper">
+                    <img src="assets/hero.png" alt="Henna Artist Illustration" class="hero-illustration">
+                    <div class="floating-shapes">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="about-container">
+            <div class="about-left reveal-up">
+                <div class="portrait-wrapper">
+                    <img src="assets/portrait.png" alt="Ashena Parveen Portrait" class="about-portrait">
+                </div>
+            </div>
+            <div class="about-right reveal-up">
+                <h2 class="section-title">The Artist Behind the Art</h2>
+                <p class="about-text">
+                    I am a passionate learner and professional beautician dedicated to the timeless craft of henna. From traditional bridal mehndi to modern, minimalist designs, I pour creativity and grace into every pattern.
+                </p>
+                <div class="about-tags">
+                    <span>Bridal Mehndi</span>
+                    <span>Arabic Style</span>
+                    <span>Modern Style</span>
+                    <span>Traditional Style</span>
+                    <span>Festival Henna</span>
+                    <span>Simple Elegant Designs</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <div class="skills-grid">
+            <div class="skill-card reveal-up">
+                <h3>Bridal Mehndi</h3>
+            </div>
+            <div class="skill-card reveal-up" style="transition-delay: 0.1s;">
+                <h3>Arabic Designs</h3>
+            </div>
+            <div class="skill-card reveal-up" style="transition-delay: 0.2s;">
+                <h3>Minimal Designs</h3>
+            </div>
+            <div class="skill-card reveal-up" style="transition-delay: 0.3s;">
+                <h3>Festival Mehndi</h3>
+            </div>
+            <div class="skill-card reveal-up" style="transition-delay: 0.4s;">
+                <h3>Floral Art</h3>
+            </div>
+            <div class="skill-card reveal-up" style="transition-delay: 0.5s;">
+                <h3>Finger Designs</h3>
+            </div>
+            <div class="skill-card reveal-up" style="transition-delay: 0.6s;">
+                <h3>Portrait Mehndi</h3>
+            </div>
+            <div class="skill-card reveal-up" style="transition-delay: 0.7s;">
+                <h3>Custom Designs</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Gallery (Horizontal Scroll) -->
+    <section id="featured-gallery" class="featured-gallery">
+        <div class="section-header reveal-up">
+            <h2 class="section-title">Featured Creations</h2>
+            <p>A glimpse into elegance.</p>
+        </div>
+        <div class="horizontal-scroll-container">
+            <!-- Card 1 -->
+            <div class="feature-card">
+                <div class="card-img" style="background-image: url('assets/bridal.png');"></div>
+                <div class="card-content">
+                    <h3>Elegant Bridal</h3>
+                    <p class="card-desc">Intricate patterns for the special day.</p>
+                    <div class="card-meta">
+                        <span>3 Hours</span>
+                        <span>Advanced</span>
+                        <span>Wedding</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="feature-card">
+                <div class="card-img" style="background-image: url('assets/minimal.png');"></div>
+                <div class="card-content">
+                    <h3>Minimal Floral</h3>
+                    <p class="card-desc">Subtle and delicate natural patterns.</p>
+                    <div class="card-meta">
+                        <span>45 Minutes</span>
+                        <span>Easy</span>
+                        <span>Casual</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="feature-card">
+                <div class="card-img" style="background-image: url('assets/arabic.png');"></div>
+                <div class="card-content">
+                    <h3>Arabic Luxury</h3>
+                    <p class="card-desc">Bold, flowing, and breathtaking.</p>
+                    <div class="card-meta">
+                        <span>2 Hours</span>
+                        <span>Intermediate</span>
+                        <span>Engagement</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 4 -->
+            <div class="feature-card">
+                <div class="card-img" style="background-image: url('assets/mandala.png');"></div>
+                <div class="card-content">
+                    <h3>Royal Mandala</h3>
+                    <p class="card-desc">Symmetrical perfection.</p>
+                    <div class="card-meta">
+                        <span>4 Hours</span>
+                        <span>Expert</span>
+                        <span>Bride</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Infinite Scroll Gallery -->
+    <section id="gallery" class="infinite-gallery">
+        <div class="section-header reveal-up">
+            <h2 class="section-title">Inspiration Gallery</h2>
+            <p>Endless creativity captured.</p>
+        </div>
+        <div class="masonry-grid" id="masonry-grid">
+            <!-- Populated by JS -->
+        </div>
+        <div class="loading-animation">
+            <div class="spinner"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="section-header reveal-up">
+            <h2 class="section-title">Premium Services</h2>
+        </div>
+        <div class="services-grid">
+            <div class="service-card glass reveal-up">
+                <div class="icon">✨</div>
+                <h3>Bridal Mehndi</h3>
+                <p>Complete hands and feet design for your special day.</p>
+                <div class="price">From $150</div>
+                <button class="btn-primary w-full">Book</button>
+            </div>
+            <div class="service-card glass reveal-up">
+                <div class="icon">💍</div>
+                <h3>Engagement Mehndi</h3>
+                <p>Elegant designs up to the mid-arm.</p>
+                <div class="price">From $80</div>
+                <button class="btn-primary w-full">Book</button>
+            </div>
+            <div class="service-card glass reveal-up">
+                <div class="icon">👶</div>
+                <h3>Baby Shower</h3>
+                <p>Gentle and beautiful designs for expecting mothers.</p>
+                <div class="price">From $60</div>
+                <button class="btn-primary w-full">Book</button>
+            </div>
+            <div class="service-card glass reveal-up">
+                <div class="icon">🎉</div>
+                <h3>Party Mehndi</h3>
+                <p>Hourly rates for group bookings and events.</p>
+                <div class="price">$100 / hr</div>
+                <button class="btn-primary w-full">Book</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="testimonials">
+        <div class="section-header reveal-up">
+            <h2 class="section-title">Client Stories</h2>
+        </div>
+        <div class="testimonials-container">
+            <div class="testimonial-card floating-slow">
+                <div class="stars">★★★★★</div>
+                <p class="review">"Ashena made my wedding day perfect. Her designs are breathtaking and she is so gentle and patient!"</p>
+                <div class="client-info">
+                    <div class="client-img placeholder"></div>
+                    <span class="client-name">Sarah M.</span>
+                </div>
+            </div>
+            <div class="testimonial-card floating-slow" style="animation-delay: -2s;">
+                <div class="stars">★★★★★</div>
+                <p class="review">"The most elegant minimalist henna I've ever had. Truly a premium experience from start to finish."</p>
+                <div class="client-info">
+                    <div class="client-img placeholder"></div>
+                    <span class="client-name">Aisha K.</span>
+                </div>
+            </div>
+            <div class="testimonial-card floating-slow" style="animation-delay: -4s;">
+                <div class="stars">★★★★★</div>
+                <p class="review">"Highly recommend for any festival! The color payoff was amazing and the art is just stunning."</p>
+                <div class="client-info">
+                    <div class="client-img placeholder"></div>
+                    <span class="client-name">Priya R.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking">
+        <div class="booking-container reveal-up">
+            <div class="booking-left">
+                <h2 class="section-title">Let's Create<br>Something Beautiful.</h2>
+                <p>Reserve your spot for an upcoming event, wedding, or just to treat yourself to elegant henna art.</p>
+            </div>
+            <div class="booking-right">
+                <form class="glass-form">
+                    <div class="input-group">
+                        <input type="text" id="name" required placeholder=" ">
+                        <label for="name">Your Name</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="tel" id="phone" required placeholder=" ">
+                        <label for="phone">Phone Number</label>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <input type="text" id="occasion" required placeholder=" ">
+                            <label for="occasion">Occasion</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="date" id="date" required placeholder=" ">
+                            <label for="date">Preferred Date</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="location" required placeholder=" ">
+                        <label for="location">Location (Home/Salon)</label>
+                    </div>
+                    <div class="input-group">
+                        <textarea id="message" rows="3" required placeholder=" "></textarea>
+                        <label for="message">Additional Details</label>
+                    </div>
+                    <button type="submit" class="btn-primary w-full magnetic">Book Appointment</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-logo">Ashena Parveen</div>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>contact@ashenaparveen.com</p>
+                    <p>+1 (555) 123-4567</p>
+                    <p>New York, NY</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Social</h4>
+                    <a href="#">Instagram</a>
+                    <a href="#">WhatsApp</a>
+                    <a href="#">Pinterest</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Links</h4>
+                    <a href="#gallery">Gallery</a>
+                    <a href="#services">Services</a>
+                    <a href="#booking">Book Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Ashena Parveen. All rights reserved.</p>
+            <p>Designed with ❤️</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
